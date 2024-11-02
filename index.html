@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officials Tools - Jacob Oyen</title>
+    <meta name="description" content="A collection of tools for helping USA Cycling officals calculate lap times." />
+    <meta property="og:title" content="Officials Tools - Jacob Oyen" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://tools.jacoboyen.com" />
+    <meta property="og:description" content="A collection of tools for helping USA Cycling officals calculate lap times." />
+    <link rel="shortcut icon" href="/images/2024-favicon.png" type="image/x-icon" />
+    <style>
+        html{
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+
+
+</head>
+<body>
+    <h2>Lap Calculator</h2>
+    <form id="lapCalculator">
+        <label for="raceTime">Race Time (in minutes):</label><br>
+        <input type="number" id="raceTime" step="0.1" required><br><br>
+        
+        <label for="firstLapTime">First Lap Time (in minutes):</label><br>
+        <input type="number" id="firstLapTime" step="0.1" required><br><br>
+        
+        <button type="button" onclick="calculateLaps()">Calculate Laps</button>
+    </form>
+    
+    <h3 id="result"></h3>
+    <p id="lapCounter"></p>
+    <p id="cutoff"></p>
+
+    <hr>
+
+    <h2>Convert time to base 10</h2>
+    <form id="timeConverter">
+        <label for="minutes">Minutes:</label>
+        <input type="number" id="minutes" step="1" required><br><br>
+        
+        <label for="seconds">Seconds:</label>
+        <input type="number" id="seconds" step="1" required><br><br>
+        
+        <button type="button" onclick="convertToHundredths()">Convert</button>
+    </form>
+    
+    <h3 id="conversionResult"></h3>
+</body>
+<script type="text/javascript">
+    function getDecimalPart(num) {
+  const integerPart = num - Math.trunc(num);
+  return integerPart;
+}
+
+function calculateLaps() {
+            const raceTime = parseFloat(document.getElementById('raceTime').value);
+            const firstLapTime = parseFloat(document.getElementById('firstLapTime').value);
+            
+            if (raceTime && firstLapTime && firstLapTime > 0) {
+                const laps = raceTime / firstLapTime;
+                const eightyPercentMin = firstLapTime*.8;
+                const eightyPercentSec = (eightyPercentMin % 1)*60;
+                document.getElementById('result').innerText = `Number of Laps: ${Math.floor(laps)} or ${laps}.`;
+                document.getElementById('lapCounter').innerText = `On the second lap, riders see ${Math.floor(laps-2)} laps to go.`;
+                document.getElementById('cutoff').innerText = `80% cutoff time: ${Math.floor(eightyPercentMin)}:${Math.floor(eightyPercentSec)}`
+            } else {
+                document.getElementById('result').innerText = 'Please enter valid numbers for both fields.';
+            }
+        }
+
+        function convertToHundredths() {
+            const minutes = parseInt(document.getElementById('minutes').value);
+            const seconds = parseInt(document.getElementById('seconds').value);
+
+            if (minutes >= 0 && seconds >= 0 && seconds < 60) {
+                const totalMinutes = minutes + (seconds / 60);
+                document.getElementById('conversionResult').innerText = `Time in hundredths of a minute: ${totalMinutes}`;
+                document.getElementById('firstLapTime').value = totalMinutes;
+            } else {
+                document.getElementById('conversionResult').innerText = 'Please enter valid minutes and seconds (0-59).';
+            }
+        }
+</script>
+</html>
